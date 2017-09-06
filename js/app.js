@@ -77,21 +77,21 @@ let width = window.innerWidth;
 let height = window.innerHeight;
 let lvl1 = [
   [1, 2, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-  [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 3, 1, 1, 1, 3, 1, 1, 3, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 3, 3, 1, 1, 1, 1, 1, 3, 3, 1],
-  [1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
-  [1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
-  [1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 3, 3, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 3, 3, 1],
+  [1, 3, 1, 1, 1, 3, 1, 1, 3, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 2, 1, 0, 0, 1],
+  [1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
+  [1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
+  [1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 3, 3, 0, 0, 1, 1, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1],
   [1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
-  [1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1],
-  [1, 0, 1, 2, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 3, 0, 0, 1, 2, 2, 1, 1, 1, 1, 1, 1, 3, 3, 1],
-  [1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 3, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
+  [1, 0, 1, 2, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
+  [1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 3, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 3, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 3, 0, 0, 1, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 1],
   [1, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 3, 0, 0, 1, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 3, 0, 0, 1, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 3, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 2, 2, 1],
-  [1, 1, 1, 1, 1, 1, 3, 3, 1, 1, 1, 0, 0, 0, 0, 3, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 3, 0, 0, 1, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 1, 1, 1, 1, 1, 3, 3, 1, 1, 1, 0, 0, 0, 0, 3, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 2, 2, 1],
   [1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 3, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
   [1, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 3, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
   [1, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 3, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
@@ -128,7 +128,7 @@ function update() {
     }
   }
   player.jumping = true;
-  if (coordinateToGridPos(player.x + 32 + margin, player.y + 32 + margin)[1] !== lvl1[0].length - 1 && coordinateToGridPos(player.x + margin, player.y + 32 + margin)[1] !== 0) {
+  if (coordinateToGridPos(player.x + 32, player.y + 32)[1] !== lvl1[0].length - 1 && coordinateToGridPos(player.x, player.y + 32)[1] !== 0) {
     while (isGridLocFull(coordinateToGridPos(player.x + margin, player.y + 32 + margin)) || isGridLocFull(coordinateToGridPos(player.x + 32 - margin, player.y + 32 + margin))) {
       tempSpeed = 0;
       friction = 0.8;
@@ -217,31 +217,6 @@ function update() {
   }
   orangePortal.frameCount++;
 
-  window.addEventListener("mousemove", function(el) {
-    let rect = canvas.getBoundingClientRect();
-    mouseX = el.clientX - rect.left;
-    mouseY = el.clientY - rect.top;
-  });
-  window.addEventListener('contextmenu', function(el) {
-    el.preventDefault();
-    return false;
-  }, false);
-  window.addEventListener("mousedown", function(el) {
-    if (el.button === 0 && blueCanShoot) {
-      blueShoot = true;
-      blueCanShoot = false;
-      setTimeout(function() {
-        blueCanShoot = true;
-      }, 200);
-    }
-    if (el.button === 2 && orangeCanShoot) {
-      orangeShoot = true;
-      orangeCanShoot = false;
-      setTimeout(function() {
-        orangeCanShoot = true;
-      }, 200);
-    }
-  });
   let theta = Math.atan2(mouseY - (player.y + 16), mouseX - (player.x + 16));
   let radius = 0;
   let finalPos = [(player.x + 16) + radius * Math.cos(theta), (player.y + 16) + radius * Math.sin(theta)];
@@ -668,6 +643,32 @@ function moveTimeout() {
     canMove = true;
   }, 200);
 }
+
+window.addEventListener("mousemove", function(el) {
+  let rect = canvas.getBoundingClientRect();
+  mouseX = el.clientX - rect.left;
+  mouseY = el.clientY - rect.top;
+});
+window.addEventListener('contextmenu', function(el) {
+  el.preventDefault();
+  return false;
+}, false);
+window.addEventListener("mousedown", function(el) {
+  if (el.button === 0 && blueCanShoot) {
+    blueShoot = true;
+    blueCanShoot = false;
+    setTimeout(function() {
+      blueCanShoot = true;
+    }, 200);
+  }
+  if (el.button === 2 && orangeCanShoot) {
+    orangeShoot = true;
+    orangeCanShoot = false;
+    setTimeout(function() {
+      orangeCanShoot = true;
+    }, 200);
+  }
+});
 
 document.body.addEventListener("keydown", function(e) {
   keys[e.keyCode] = true;
