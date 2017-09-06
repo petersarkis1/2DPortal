@@ -26,6 +26,8 @@ let portal_door_start = new Image(64, 64);
 portal_door_start.src = 'portalDoorStart.png';
 let portal_door_end = new Image(64, 64);
 portal_door_end.src = 'portalDoorEnd.png';
+let cube_image = new Image(32, 32);
+cube_image.src = 'cube.png';
 let player = {
   x: 32,
   y: 544,
@@ -75,10 +77,13 @@ let endDoor = {
   height: 64
 };
 let cube = {
-  x: 0,
-  y: 0,
-  width: 32,
-  height: 32
+  x: 60,
+  y: 60,
+  width: 16,
+  height: 16,
+  velX: 0,
+  velY: 0,
+  image: cube_image
 };
 let tempSpeed = 0;
 let canMove = true;
@@ -144,14 +149,36 @@ let lvl1 = [
   [1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 ];
 let lvl2 = [
+  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+];
+let lvl3 = [
   [1, 2, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-  [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 3, 3, 1],
-  [1, 3, 1, 1, 1, 3, 1, 1, 3, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 2, 1, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 3, 3, 1],
+  [1, 3, 1, 1, 1, 3, 1, 1, 3, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 2, 1, 0, 0, 1],
   [1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
   [1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
-  [1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 3, 0, 0, 3, 1, 1, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1],
+  [1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 3, 0, 0, 3, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1],
   [1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
   [1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
   [1, 0, 1, 2, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
@@ -165,7 +192,7 @@ let lvl2 = [
   [1, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 3, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 1, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 ];
-let lvl3 = [
+let lvl4 = [
   [1, 2, 1, 1, 1, 1, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
   [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
   [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
@@ -188,7 +215,7 @@ let lvl3 = [
   [1, 1, 1, 1, 1, 1, 2, 1, 2, 2, 2, 1, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 1, 1, 1, 1, 1]
 ];
 
-let lvl4 = [
+let lvl5 = [
   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
   [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
   [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
@@ -211,7 +238,7 @@ let lvl4 = [
   [1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 ];
 
-let currentLvl = lvl4;
+let currentLvl = lvl1;
 
 function update() {
   for (let x = 0; x < 30; x++) {
@@ -242,6 +269,8 @@ function update() {
       }
     }
   }
+
+  //player
   player.jumping = true;
   if (coordinateToGridPos(player.x + 32, player.y + 32)[1] !== currentLvl[0].length - 1 && coordinateToGridPos(player.x, player.y + 32)[1] !== 0) {
     while (isGridLocFull(coordinateToGridPos(player.x + margin, player.y + 32 + margin)) || isGridLocFull(coordinateToGridPos(player.x + 32 - margin, player.y + 32 + margin))) {
@@ -270,6 +299,36 @@ function update() {
     player.velX = 0;
     player.jumping = true;
   }
+
+  //cube
+  // if (coordinateToGridPos(cube.x + 16, cube.y + 16)[1] !== currentLvl[0].length - 1 && coordinateToGridPos(cube.x, cube.y + 16)[1] !== 0) {
+  //   while (isGridLocFull(coordinateToGridPos(cube.x + margin, cube.y + 16 + margin)) || isGridLocFull(coordinateToGridPos(cube.x + 16 - margin, cube.y + 16 + margin))) {
+  //     tempSpeed = 0;
+  //     friction = 0.8;
+  //     player.y -= 0.1;
+  //     player.velY = 0;
+  //     player.jumping = false;
+  //   }
+  //   while (isGridLocFull(coordinateToGridPos(player.x + margin, player.y - margin)) || isGridLocFull(coordinateToGridPos(player.x + 32 - margin, player.y - margin))) {
+  //     tempSpeed = 0;
+  //     player.y += 0.1;
+  //     player.velY = 0;
+  //     player.jumping = true;
+  //   }
+  // }
+  // while (isGridLocFull(coordinateToGridPos(player.x - margin, player.y + margin)) || isGridLocFull(coordinateToGridPos(player.x - margin, player.y + 32 - margin))) {
+  //   tempSpeed = 0;
+  //   player.x += 0.1;
+  //   player.velX = 0;
+  //   player.jumping = true;
+  // }
+  // while (isGridLocFull(coordinateToGridPos(player.x + 32 + margin, player.y + margin)) || isGridLocFull(coordinateToGridPos(player.x + 32 + margin, player.y + 32 - margin))) {
+  //   tempSpeed = 0;
+  //   player.x -= 0.1;
+  //   player.velX = 0;
+  //   player.jumping = true;
+  // }
+
   if (keys[87] || keys[32]) {
     // up arrow or space
     if (!player.jumping) {
@@ -289,6 +348,11 @@ function update() {
       player.velX--;
     }
   }
+  cube.x += cube.velX;
+  cube.y += cube.velY;
+  cube.velX *= friction;
+  cube.velY += gravity;
+
   player.x += player.velX;
   player.y += player.velY;
   player.velX *= friction;
@@ -735,6 +799,8 @@ function update() {
   //console.log(player.velY, player.velX);
   //console.log(friction);
   ctx.drawImage(player.currentChell, (player.FrameI * 32), 0, 32, 32, player.x, player.y, 32, 32);
+  ctx.clearRect(cube.x, cube.y, cube.width, cube.height);
+  ctx.drawImage(cube.image, cube.x, cube.y);
   ctx.clearRect(bluePortal.x, bluePortal.y, bluePortal.width, bluePortal.height);
   ctx.drawImage(bluePortal.image, (bluePortal.FrameI * bluePortal.width), 0, bluePortal.width, bluePortal.height, bluePortal.x, bluePortal.y, bluePortal.width, bluePortal.height);
   ctx.clearRect(orangePortal.x, orangePortal.y, orangePortal.width, orangePortal.height);
@@ -750,6 +816,12 @@ function update() {
     bluePortal.y = -10;
     orangePortal.x = -10;
     orangePortal.y = -10;
+    if (currentLvl == lvl4) {
+      currentLvl = lvl5;
+    }
+    if (currentLvl == lvl3) {
+      currentLvl = lvl4;
+    }
     if (currentLvl == lvl2) {
       currentLvl = lvl3;
     }
