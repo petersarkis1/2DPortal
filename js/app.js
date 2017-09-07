@@ -2,78 +2,12 @@ let canvas = document.getElementById("canvas");
 ctx = canvas.getContext("2d");
 canvas.width = 960;
 canvas.height = 640;
-let chell_right = new Image(32, 128);
-chell_right.src = 'chell_right.png';
-let chell_left = new Image(32, 128);
-chell_left.src = 'chell_left.png';
-let blue_portal_image_left = new Image(32, 20);
-blue_portal_image_left.src = 'bluePortalLeft.png';
-let blue_portal_image_right = new Image(32, 20);
-blue_portal_image_right.src = 'bluePortalRight.png';
-let blue_portal_image_floor = new Image(5, 128);
-blue_portal_image_floor.src = 'bluePortalFloor.png';
-let blue_portal_image_ceiling = new Image(5, 128);
-blue_portal_image_ceiling.src = 'bluePortalCeiling.png';
-let orange_portal_image_left = new Image(32, 20);
-orange_portal_image_left.src = 'orangePortalLeft.png';
-let orange_portal_image_right = new Image(32, 20);
-orange_portal_image_right.src = 'orangePortalRight.png';
-let orange_portal_image_floor = new Image(5, 128);
-orange_portal_image_floor.src = 'orangePortalFloor.png';
-let orange_portal_image_ceiling = new Image(5, 128);
-orange_portal_image_ceiling.src = 'orangePortalCeiling.png';
-let portal_door_start = new Image(64, 64);
-portal_door_start.src = 'portalDoorStart.png';
-let portal_door_end = new Image(64, 64);
-portal_door_end.src = 'portalDoorEnd.png';
-let player = {
-  x: 32,
-  y: 544,
-  width: 32,
-  height: 32,
-  speed: 3,
-  velX: 0,
-  velY: 0,
-  jumping: false,
-  currentChell: chell_right,
-  FrameI: 0,
-  frameSpeed: 10,
-  frameCount: 0
-};
-let bluePortal = {
-  x: -10,
-  y: -10,
-  width: 5,
-  height: 32,
-  image: blue_portal_image_left,
-  dir: "left",
-  FrameI: 0,
-  frameSpeed: 10,
-  frameCount: 0
-};
-let orangePortal = {
-  x: -10,
-  y: -10,
-  width: 5,
-  height: 32,
-  image: orange_portal_image_left,
-  dir: "left",
-  FrameI: 0,
-  frameSpeed: 10,
-  frameCount: 0
-};
-let startDoor = {
-  x: 32,
-  y: 544,
-  width: 64,
-  height: 64
-};
-let endDoor = {
-  x: 864,
-  y: 544,
-  width: 64,
-  height: 64
-};
+
+let player = getPlayer();
+let bluePortal  = getBluePortal();
+let orangePortal = getOrangePortal();
+let startDoor = getStartDoor();
+let endDoor = getEndDoor();
 let tempSpeed = 0;
 let canMove = true;
 let aim = false;
@@ -85,187 +19,44 @@ let keys = [];
 let canLeft = true;
 let friction = 0.8;
 let gravity = 0.24;
-let margin = 2;
-let portalMargin = 8;
 let mouseX = 0;
 let mouseY = 0;
+let levels = getLevels();
+let curLvl = 4;
 let width = window.innerWidth;
 let height = window.innerHeight;
 
-// [
-//   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-//   [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-//   [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-//   [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-//   [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-//   [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-//   [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-//   [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-//   [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-//   [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-//   [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-//   [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-//   [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-//   [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-//   [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-//   [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-//   [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-//   [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-//   [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-//   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-// ];
 
-let lvl1 = [
-  [1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2],
-  [1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 3, 3, 3, 1],
-  [1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 2],
-  [1, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 2],
-  [1, 0, 0, 0, 0, 0, 0, 2, 1, 1, 1, 1, 1, 3, 3, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-  [1, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-];
-let lvl2 = [
-  [1, 2, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-  [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 3, 3, 1],
-  [1, 3, 1, 1, 1, 3, 1, 1, 3, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 2, 1, 0, 0, 1],
-  [1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
-  [1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
-  [1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 3, 0, 0, 3, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1],
-  [1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
-  [1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
-  [1, 0, 1, 2, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
-  [1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 3, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 3, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 3, 0, 0, 0, 1, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 3, 0, 0, 0, 1, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 3, 0, 0, 0, 1, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 1, 1, 1, 1, 1, 3, 3, 1, 1, 1, 0, 0, 0, 3, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 2, 2, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 3, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 3, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 3, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 1, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-];
-let lvl3 = [
-  [1, 2, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 3, 3, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 3, 3, 1],
-  [1, 3, 1, 1, 1, 1, 1, 1, 3, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 3, 1, 1, 2, 1, 2, 1, 3, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 1, 0, 0, 3, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 1, 0, 0, 3, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 1, 0, 0, 3, 0, 0, 1, 0, 0, 3, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 1, 3, 1, 1, 3, 1, 1, 0, 0, 3, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 3, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 3, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1],
-  [1, 1, 1, 2, 1, 1, 0, 1, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1],
-  [1, 1, 1, 1, 1, 1, 3, 1, 0, 0, 0, 3, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 3, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 3, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1],
-  [1, 1, 1, 1, 1, 1, 2, 1, 2, 2, 2, 1, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 1, 1, 1, 1, 1]
-];
-
-let lvl4 = [
-  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
-  [1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-];
-
-let currentLvl = lvl1;
-
+//game loop
 function update() {
+
   for (let x = 0; x < 30; x++) {
     for (let y = 0; y < 20; y++) {
-      let pos = currentLvl[y][x];
+      let pos = levels[curLvl][y][x];
+      //clear empty space
       if (pos === 0) {
         ctx.clearRect(x * 32, y * 32, 32, 32);
       }
+      //non-portalable squares
       if (pos === 1) {
-        ctx.fillStyle = "black";
-        ctx.fillRect(x * 32, y * 32, 32, 32);
-        ctx.fillStyle = "gray";
-        ctx.fillRect(x * 32 + 1, y * 32 + 1, 30, 30);
+        drawBorderedCube(x, y, "black", "gray", 1);
       }
+      //portalable squares
       if (pos === 2) {
-        ctx.fillStyle = "darkgray";
-        ctx.fillRect(x * 32, y * 32, 32, 32);
-        ctx.fillStyle = "white";
-        ctx.fillRect(x * 32 + 1, y * 32 + 1, 30, 30);
+        drawBorderedCube(x, y, "darkgray", "white", 1);
       }
+      //glass squares
       if (pos === 3) {
-        ctx.fillStyle = "darkgray";
-        ctx.fillRect(x * 32, y * 32, 32, 32);
-        ctx.globalAlpha = 0.2;
-        ctx.fillStyle = "white";
-        ctx.fillRect(x * 32 + 1, y * 32 + 1, 30, 30);
-        ctx.globalAlpha = 1.0;
+        drawBorderedCube(x, y, "darkgray", "white", 0.2);
       }
     }
   }
 
-  //player
   player.jumping = true;
-  if (coordinateToGridPos(player.x + 32, player.y + 32)[1] !== currentLvl[0].length - 1 && coordinateToGridPos(player.x, player.y + 32)[1] !== 0) {
-    while (isGridLocFull(coordinateToGridPos(player.x + margin, player.y + 32 + margin)) || isGridLocFull(coordinateToGridPos(player.x + 32 - margin, player.y + 32 + margin))) {
-      tempSpeed = 0;
-      friction = 0.8;
-      player.y -= 0.1;
-      player.velY = 0;
-      player.jumping = false;
-    }
-    while (isGridLocFull(coordinateToGridPos(player.x + margin, player.y - margin)) || isGridLocFull(coordinateToGridPos(player.x + 32 - margin, player.y - margin))) {
-      tempSpeed = 0;
-      player.y += 0.1;
-      player.velY = 0;
-      player.jumping = true;
-    }
+  if (player.notInEdgeWalls()) {
+    player.collideWith(['bottom', 'top']);
   }
-  while (isGridLocFull(coordinateToGridPos(player.x - margin, player.y + margin)) || isGridLocFull(coordinateToGridPos(player.x - margin, player.y + 32 - margin))) {
-    tempSpeed = 0;
-    player.x += 0.1;
-    player.velX = 0;
-    player.jumping = true;
-  }
-  while (isGridLocFull(coordinateToGridPos(player.x + 32 + margin, player.y + margin)) || isGridLocFull(coordinateToGridPos(player.x + 32 + margin, player.y + 32 - margin))) {
-    tempSpeed = 0;
-    player.x -= 0.1;
-    player.velX = 0;
-    player.jumping = true;
-  }
+  player.collideWith(['left', 'right']);
 
   if (keys[87] || keys[32]) {
     // up arrow or space
@@ -287,52 +78,120 @@ function update() {
     }
   }
 
-  player.x += player.velX;
-  player.y += player.velY;
+  //physics movement
   player.velX *= friction;
   player.velY += gravity;
-  ctx.fillStyle = "green";
-  //ctx.fillRect(player.x, player.y, 32, 32);
-  if (Math.trunc(player.velX) === 0) {
-    player.frameCount = 1;
-    player.FrameI = 0;
-  }
-  if (player.velX > 0) {
-    player.currentChell = chell_right;
-  }
-  if (player.velX < 0) {
-    player.currentChell = chell_left;
-  }
-  if (player.frameCount % player.frameSpeed === 0) {
-    if (player.FrameI === 3) {
-      player.FrameI = 0;
-    } else {
-      player.FrameI++;
-    }
-  }
-  player.frameCount++;
+  player.x += player.velX;
+  player.y += player.velY;
 
-  if (bluePortal.frameCount % bluePortal.frameSpeed === 0) {
-    if (bluePortal.FrameI === 3) {
-      bluePortal.FrameI = 0;
-    } else {
-      bluePortal.FrameI++;
-    }
-  }
-  bluePortal.frameCount++;
+  //sprite animation
+  player.setSpriteDirection();
+  animateSprite(player);
+  animateSprite(bluePortal);
+  animateSprite(orangePortal);
 
-  if (orangePortal.frameCount % orangePortal.frameSpeed === 0) {
-    if (orangePortal.FrameI === 3) {
-      orangePortal.FrameI = 0;
-    } else {
-      orangePortal.FrameI++;
-    }
-  }
-  orangePortal.frameCount++;
-
+  //draw gates
   ctx.drawImage(portal_door_start, startDoor.x, startDoor.y);
   ctx.drawImage(portal_door_end, endDoor.x, endDoor.y);
 
+  finalPos = portalAim();
+
+  if (blueShoot) {
+    blueShoot = false;
+    firePortal(bluePortal, orangePortal, 'blue')
+  }
+  if (orangeShoot) {
+    orangeShoot = false;
+    firePortal(orangePortal, bluePortal, 'orange')
+  }
+
+                    //(portal in  ,  portal out)
+  floorPortalCollision(bluePortal, orangePortal);
+  floorPortalCollision(orangePortal, bluePortal);
+
+  ceilingPortalCollision(bluePortal, orangePortal);
+  ceilingPortalCollision(orangePortal, bluePortal);
+
+  leftPortalCollision(bluePortal, orangePortal);
+  leftPortalCollision(orangePortal, bluePortal);
+
+  rightPortalCollision(bluePortal, orangePortal);
+  rightPortalCollision(orangePortal, bluePortal);
+
+  if (player.velY > 27) {
+    player.velY = 27;
+  }
+  console.log(Math.trunc(player.velY));
+  ctx.drawImage(player.currentChell, (player.FrameI * 32), 0, 32, 32, player.x, player.y, 32, 32);
+  ctx.clearRect(bluePortal.x, bluePortal.y, bluePortal.width, bluePortal.height);
+  ctx.drawImage(bluePortal.image, (bluePortal.FrameI * bluePortal.width), 0, bluePortal.width, bluePortal.height, bluePortal.x, bluePortal.y, bluePortal.width, bluePortal.height);
+  ctx.clearRect(orangePortal.x, orangePortal.y, orangePortal.width, orangePortal.height);
+  ctx.drawImage(orangePortal.image, (orangePortal.FrameI * orangePortal.width), 0, orangePortal.width, orangePortal.height, orangePortal.x, orangePortal.y, orangePortal.width, orangePortal.height);
+
+  if (player.x < endDoor.x + endDoor.width &&
+    player.x + player.width > endDoor.x &&
+    player.y < endDoor.y + endDoor.height &&
+    player.y + player.height > endDoor.y) {
+    player.x = startDoor.x;
+    player.y = startDoor.y;
+    bluePortal.x = -10;
+    bluePortal.y = -10;
+    orangePortal.x = -10;
+    orangePortal.y = -10;
+    if (curLvl == 3) {
+      curLvl = 4;
+    }
+    if (curLvl == 2) {
+      curLvl = 3;
+    }
+    if (curLvl == 1) {
+      curLvl = 2;
+    }
+    if (curLvl == 0) {
+      curLvl = 1;
+    }
+  }
+
+  requestAnimationFrame(update);
+}
+
+function drawBorderedCube(x, y, border, center, alpha) {
+  ctx.fillStyle = border;
+  ctx.fillRect(x * 32, y * 32, 32, 32);
+  ctx.fillStyle = center;
+  ctx.globalAlpha = alpha;
+  ctx.fillRect(x * 32 + 1, y * 32 + 1, 30, 30);
+  ctx.globalAlpha = 1.0;
+}
+
+function coordinateToGridPos(x, y) {
+  return [Math.floor(y / 32), Math.floor(x / 32)];
+}
+
+function isGridLocFull(arr) {
+  return levels[curLvl][arr[0]][arr[1]] !== 0;
+}
+
+function isGridLocFullNotGlass(arr) {
+  return levels[curLvl][arr[0]][arr[1]] !== 0 && levels[curLvl][arr[0]][arr[1]] !== 3;
+}
+
+function getGridItem(arr) {
+  return levels[curLvl][arr[0]][arr[1]];
+}
+
+function animateSprite(spr) {
+  if (spr.frameCount % spr.frameSpeed === 0) {
+    if (spr.FrameI === 3) {
+      spr.FrameI = 0;
+    } else {
+      spr.FrameI++;
+    }
+  }
+  spr.frameCount++;
+}
+
+function portalAim() {
   let theta = Math.atan2(mouseY - (player.y + 16), mouseX - (player.x + 16));
   let radius = 0;
   let finalPos = [(player.x + 16) + radius * Math.cos(theta), (player.y + 16) + radius * Math.sin(theta)];
@@ -345,437 +204,200 @@ function update() {
   ctx.lineTo(finalPos[0], finalPos[1]);
   ctx.strokeStyle = '#ff0000';
   ctx.stroke();
-  if (blueShoot) {
-    blueShoot = false;
-    if (getGridItem(coordinateToGridPos(finalPos[0], finalPos[1])) === 2) {
-      //left portal
-      if (!isGridLocFull(coordinateToGridPos(finalPos[0] - 1, finalPos[1]))) {
-        bluePortal.dir = "left";
-        bluePortal.width = 5;
-        bluePortal.height = 32;
-        bluePortal.image = blue_portal_image_left;
-        bluePortal.x = finalPos[0] - 5;
-        bluePortal.y = finalPos[1] - finalPos[1] % 32;
-      }
-      //right portal
-      if (!isGridLocFull(coordinateToGridPos(finalPos[0] + 1, finalPos[1]))) {
-        bluePortal.dir = "right";
-        bluePortal.width = 5;
-        bluePortal.height = 32;
-        bluePortal.image = blue_portal_image_right;
-        bluePortal.x = finalPos[0];
-        bluePortal.y = finalPos[1] - finalPos[1] % 32;
-      }
-      //floor portal
-      if (!isGridLocFull(coordinateToGridPos(finalPos[0], finalPos[1] - 1))) {
-        bluePortal.dir = "floor";
-        bluePortal.width = 32;
-        bluePortal.height = 5;
-        bluePortal.image = blue_portal_image_floor;
-        bluePortal.x = finalPos[0] - finalPos[0] % 32;
-        bluePortal.y = finalPos[1] - 5;
-      }
-      //ceiling portal
-      if (!isGridLocFull(coordinateToGridPos(finalPos[0], finalPos[1] + 1))) {
-        bluePortal.dir = "ceiling";
-        bluePortal.width = 32;
-        bluePortal.height = 5;
-        bluePortal.image = blue_portal_image_ceiling;
-        bluePortal.x = finalPos[0] - finalPos[0] % 32;
-        bluePortal.y = finalPos[1];
-      }
+  return finalPos;
+}
+
+function firePortal(portal, otherPortal, color) {
+  if (getGridItem(coordinateToGridPos(finalPos[0], finalPos[1])) === 2) {
+    //left portal
+    if (!isGridLocFull(coordinateToGridPos(finalPos[0] - 1, finalPos[1]))) {
+      portal.dir = "left";
+      portal.width = 5;
+      portal.height = 32;
+      portal.image = portal.images[portal.dir];
+      portal.x = finalPos[0] - 5;
+      portal.y = finalPos[1] - finalPos[1] % 32;
     }
-    if (Math.abs(orangePortal.x - bluePortal.x) < 1 && Math.abs(orangePortal.y - bluePortal.y) < 1) {
-      orangePortal.x = -10
-      orangePortal.y = -10
+    //right portal
+    if (!isGridLocFull(coordinateToGridPos(finalPos[0] + 1, finalPos[1]))) {
+      portal.dir = "right";
+      portal.width = 5;
+      portal.height = 32;
+      portal.image = portal.images[portal.dir];
+      portal.x = finalPos[0];
+      portal.y = finalPos[1] - finalPos[1] % 32;
+    }
+    //floor portal
+    if (!isGridLocFull(coordinateToGridPos(finalPos[0], finalPos[1] - 1))) {
+      portal.dir = "floor";
+      portal.width = 32;
+      portal.height = 5;
+      portal.image = portal.images[portal.dir];
+      portal.x = finalPos[0] - finalPos[0] % 32;
+      portal.y = finalPos[1] - 5;
+    }
+    //ceiling portal
+    if (!isGridLocFull(coordinateToGridPos(finalPos[0], finalPos[1] + 1))) {
+      portal.dir = "ceiling";
+      portal.width = 32;
+      portal.height = 5;
+      portal.image = portal.images[portal.dir];
+      portal.x = finalPos[0] - finalPos[0] % 32;
+      portal.y = finalPos[1];
     }
   }
-  if (orangeShoot) {
-    orangeShoot = false;
-    if (getGridItem(coordinateToGridPos(finalPos[0], finalPos[1])) === 2) {
-      //left portal
-      if (!isGridLocFull(coordinateToGridPos(finalPos[0] - 1, finalPos[1]))) {
-        orangePortal.dir = "left";
-        orangePortal.width = 5;
-        orangePortal.height = 32;
-        orangePortal.image = orange_portal_image_left;
-        orangePortal.x = finalPos[0] - 5;
-        orangePortal.y = finalPos[1] - finalPos[1] % 32;
-      }
-      //right portal
-      if (!isGridLocFull(coordinateToGridPos(finalPos[0] + 1, finalPos[1]))) {
-        orangePortal.dir = "right";
-        orangePortal.width = 5;
-        orangePortal.height = 32;
-        orangePortal.image = orange_portal_image_right;
-        orangePortal.x = finalPos[0];
-        orangePortal.y = finalPos[1] - finalPos[1] % 32;
-      }
-      //floor portal
-      if (!isGridLocFull(coordinateToGridPos(finalPos[0], finalPos[1] - 1))) {
-        orangePortal.dir = "floor";
-        orangePortal.width = 32;
-        orangePortal.height = 5;
-        orangePortal.image = orange_portal_image_floor;
-        orangePortal.x = finalPos[0] - finalPos[0] % 32;
-        orangePortal.y = finalPos[1] - 5;
-      }
-      //ceiling portal
-      if (!isGridLocFull(coordinateToGridPos(finalPos[0], finalPos[1] + 1))) {
-        orangePortal.dir = "ceiling";
-        orangePortal.width = 32;
-        orangePortal.height = 5;
-        orangePortal.image = orange_portal_image_ceiling;
-        orangePortal.x = finalPos[0] - finalPos[0] % 32;
-        orangePortal.y = finalPos[1];
-      }
-    }
-    if (Math.abs(orangePortal.x - bluePortal.x) < 1 && Math.abs(orangePortal.y - bluePortal.y) < 1) {
-      bluePortal.x = -10
-      bluePortal.y = -10
-    }
+  if (Math.abs(otherPortal.x - portal.x) < 1 && Math.abs(otherPortal.y - portal.y) < 1) {
+    otherPortal.x = -10
+    otherPortal.y = -10
   }
+}
 
-  //floor
-
-  if (bluePortal.dir === 'floor' &&
-    player.x < bluePortal.x + bluePortal.width - portalMargin &&
-    player.x + player.width > bluePortal.x + portalMargin &&
-    player.y < bluePortal.y + bluePortal.height - 8 &&
-    player.y + player.height > bluePortal.y + 2) {
+function floorPortalCollision(portal, otherPortal){
+  if (portal.dir === 'floor' &&
+    player.x < portal.x + portal.width - 8 &&
+    player.x + player.width > portal.x + 8 &&
+    player.y < portal.y + portal.height - 8 &&
+    player.y + player.height > portal.y + 2) {
     friction = 0.98;
-    if (orangePortal.x != -10 && orangePortal.dir === 'ceiling') {
-      player.x = orangePortal.x;
-      player.y = orangePortal.y + 4;
+    if (otherPortal.x != -10 && otherPortal.dir === 'ceiling') {
+      player.x = otherPortal.x;
+      player.y = otherPortal.y + 4;
       player.velX = 0;
     }
-    if (orangePortal.x != -10 && orangePortal.dir === 'left') {
-      player.x = orangePortal.x - 36;
-      player.y = orangePortal.y + 4;
+    if (otherPortal.x != -10 && otherPortal.dir === 'left') {
+      player.x = otherPortal.x - 36;
+      player.y = otherPortal.y + 4;
       tempSpeed += Math.sqrt(Math.pow(player.velX, 2) + Math.pow(player.velY, 2));
       player.velX = -tempSpeed;
       player.velY = 0;
     }
-    if (orangePortal.x != -10 && orangePortal.dir === 'right') {
-      player.x = orangePortal.x + 12;
-      player.y = orangePortal.y + 4;
+    if (otherPortal.x != -10 && otherPortal.dir === 'right') {
+      player.x = otherPortal.x + 12;
+      player.y = otherPortal.y + 4;
       tempSpeed += Math.sqrt(Math.pow(player.velX, 2) + Math.pow(player.velY, 2));
       player.velX = tempSpeed;
       player.velY = 0;
     }
-    if (orangePortal.x != -10 && orangePortal.dir === 'floor') {
-      player.x = orangePortal.x;
-      player.y = orangePortal.y - 32;
-      player.velY = -player.velY * 0.97;
+    if (otherPortal.x != -10 && otherPortal.dir === 'floor') {
+      player.x = otherPortal.x;
+      player.y = otherPortal.y - 32;
+      player.velY = -Math.sqrt(Math.pow(player.velX, 2) + Math.pow(player.velY, 2));
       player.velX = 0;
     }
   }
+}
 
-  if (orangePortal.dir === 'floor' &&
-    player.x < orangePortal.x + orangePortal.width - portalMargin &&
-    player.x + player.width > orangePortal.x + portalMargin &&
-    player.y < orangePortal.y + orangePortal.height - 8 &&
-    player.y + player.height > orangePortal.y + 2) {
+function ceilingPortalCollision(portal, otherPortal){
+  if (portal.dir === 'ceiling' &&
+    player.x < portal.x + portal.width - 8 &&
+    player.x + player.width > portal.x + 8 &&
+    player.y < portal.y + portal.height - 2 &&
+    player.y + player.height > portal.y) {
     friction = 0.98;
-    if (bluePortal.x != -10 && bluePortal.dir === 'ceiling') {
-      player.x = bluePortal.x;
-      player.y = bluePortal.y + 4;
-      player.velX = 0;
-    }
-    if (bluePortal.x != -10 && bluePortal.dir === 'left') {
-      player.x = bluePortal.x - 36;
-      player.y = bluePortal.y + 4;
-      tempSpeed += Math.sqrt(Math.pow(player.velX, 2) + Math.pow(player.velY, 2));
-      player.velX = -tempSpeed;
-      player.velY = 0;
-    }
-    if (bluePortal.x != -10 && bluePortal.dir === 'right') {
-      player.x = bluePortal.x + 12;
-      player.y = bluePortal.y + 4;
-      tempSpeed += Math.sqrt(Math.pow(player.velX, 2) + Math.pow(player.velY, 2));
-      player.velX = tempSpeed;
-      player.velY = 0;
-    }
-    if (bluePortal.x != -10 && bluePortal.dir === 'floor') {
-      player.x = bluePortal.x;
-      player.y = bluePortal.y - 32;
-      player.velY = -player.velY * 0.97;
-      player.velX = 0;
-    }
-  }
-  //ceiling
-
-  if (bluePortal.dir === 'ceiling' &&
-    player.x < bluePortal.x + bluePortal.width - portalMargin &&
-    player.x + player.width > bluePortal.x + portalMargin &&
-    player.y < bluePortal.y + bluePortal.height - 2 &&
-    player.y + player.height > bluePortal.y) {
-    friction = 0.98;
-    if (orangePortal.x != -10 && orangePortal.dir === 'ceiling') {
-      player.x = orangePortal.x;
-      player.y = orangePortal.y + 4;
+    if (otherPortal.x != -10 && otherPortal.dir === 'ceiling') {
+      player.x = otherPortal.x;
+      player.y = otherPortal.y + 4;
       player.velY = -player.velY;
       player.velX = 0;
     }
-    if (orangePortal.x != -10 && orangePortal.dir === 'left') {
-      player.x = orangePortal.x - 36;
-      player.y = orangePortal.y + 4;
+    if (otherPortal.x != -10 && otherPortal.dir === 'left') {
+      player.x = otherPortal.x - 36;
+      player.y = otherPortal.y + 4;
       tempSpeed += Math.sqrt(Math.pow(player.velX, 2) + Math.pow(player.velY, 2));
       player.velX = -tempSpeed;
       player.velY = 0;
     }
-    if (orangePortal.x != -10 && orangePortal.dir === 'right') {
-      player.x = orangePortal.x + 12;
-      player.y = orangePortal.y + 4;
+    if (otherPortal.x != -10 && otherPortal.dir === 'right') {
+      player.x = otherPortal.x + 12;
+      player.y = otherPortal.y + 4;
       tempSpeed += Math.sqrt(Math.pow(player.velX, 2) + Math.pow(player.velY, 2));
       player.velX = tempSpeed;
       player.velY = 0;
     }
-    if (orangePortal.x != -10 && orangePortal.dir === 'floor') {
-      player.x = orangePortal.x;
-      player.y = orangePortal.y - 32;
-      player.velY = player.velY * 0.94;
+    if (otherPortal.x != -10 && otherPortal.dir === 'floor') {
+      player.x = otherPortal.x;
+      player.y = otherPortal.y - 32;
+      player.velY = player.velY;
       player.velX = 0;
     }
   }
+}
 
-  if (orangePortal.dir === 'ceiling' &&
-    player.x < orangePortal.x + orangePortal.width - portalMargin &&
-    player.x + player.width > orangePortal.x + portalMargin &&
-    player.y < orangePortal.y + orangePortal.height - 2 &&
-    player.y + player.height > orangePortal.y) {
+function leftPortalCollision(portal, otherPortal){
+  if (portal.dir === 'left' &&
+    player.x < portal.x + portal.width &&
+    player.x + player.width - 2 > portal.x &&
+    player.y < portal.y + portal.height - 4 &&
+    player.y + player.height > portal.y + 2) {
     friction = 0.98;
-    if (bluePortal.x != -10 && bluePortal.dir === 'ceiling') {
-      player.x = bluePortal.x;
-      player.y = bluePortal.y + 4;
-      player.velY = -player.velY;
-      player.velX = 0;
-    }
-    if (bluePortal.x != -10 && bluePortal.dir === 'left') {
-      player.x = bluePortal.x - 36;
-      player.y = bluePortal.y + 4;
-      tempSpeed += Math.sqrt(Math.pow(player.velX, 2) + Math.pow(player.velY, 2));
-      player.velX = -tempSpeed;
-      player.velY = 0;
-    }
-    if (bluePortal.x != -10 && bluePortal.dir === 'right') {
-      player.x = bluePortal.x + 12;
-      player.y = bluePortal.y + 4;
-      tempSpeed += Math.sqrt(Math.pow(player.velX, 2) + Math.pow(player.velY, 2));
-      player.velX = tempSpeed;
-      player.velY = 0;
-    }
-    if (bluePortal.x != -10 && bluePortal.dir === 'floor') {
-      player.x = bluePortal.x;
-      player.y = bluePortal.y - 32;
-      player.velY = player.velY * 0.94;
-      player.velX = 0;
-    }
-  }
-
-  //left
-
-  if (bluePortal.dir === 'left' &&
-    player.x < bluePortal.x + bluePortal.width &&
-    player.x + player.width - 2 > bluePortal.x &&
-    player.y < bluePortal.y + bluePortal.height - 4 &&
-    player.y + player.height > bluePortal.y + 2) {
-    friction = 0.98;
-    if (orangePortal.x != -10 && orangePortal.dir === 'ceiling') {
-      player.x = orangePortal.x;
-      player.y = orangePortal.y + 4;
+    if (otherPortal.x != -10 && otherPortal.dir === 'ceiling') {
+      player.x = otherPortal.x;
+      player.y = otherPortal.y + 4;
       tempSpeed += Math.sqrt(Math.pow(player.velX, 2) + Math.pow(player.velY, 2));
       player.velY = tempSpeed;
       player.velX = 0;
     }
-    if (orangePortal.x != -10 && orangePortal.dir === 'left') {
+    if (otherPortal.x != -10 && otherPortal.dir === 'left') {
       canMove = false;
       moveTimeout();
-      player.x = orangePortal.x - 36;
-      player.y = orangePortal.y + 4;
+      player.x = otherPortal.x - 36;
+      player.y = otherPortal.y + 4;
       tempSpeed += Math.sqrt(Math.pow(player.velX, 2) + Math.pow(player.velY, 2));
       player.velX = -tempSpeed;
       player.velY = 0;
     }
-    if (orangePortal.x != -10 && orangePortal.dir === 'right') {
-      player.x = orangePortal.x + 12;
-      player.y = orangePortal.y + 4;
+    if (otherPortal.x != -10 && otherPortal.dir === 'right') {
+      player.x = otherPortal.x + 12;
+      player.y = otherPortal.y + 4;
       tempSpeed += Math.sqrt(Math.pow(player.velX, 2) + Math.pow(player.velY, 2));
       player.velX = tempSpeed;
       player.velY = 0;
     }
-    if (orangePortal.x != -10 && orangePortal.dir === 'floor') {
-      player.x = orangePortal.x;
-      player.y = orangePortal.y - 32;
+    if (otherPortal.x != -10 && otherPortal.dir === 'floor') {
+      player.x = otherPortal.x;
+      player.y = otherPortal.y - 32;
       tempSpeed += Math.sqrt(Math.pow(player.velX, 2) + Math.pow(player.velY, 2));
       player.velY = -tempSpeed;
-      //player.velX = 0;
     }
   }
+}
 
-  if (orangePortal.dir === 'left' &&
-    player.x < orangePortal.x + orangePortal.width &&
-    player.x + player.width - 2 > orangePortal.x &&
-    player.y < orangePortal.y + orangePortal.height - 4 &&
-    player.y + player.height > orangePortal.y + 2) {
+function rightPortalCollision(portal, otherPortal){
+  if (portal.dir === 'right' &&
+    player.x < portal.x + portal.width - 2 &&
+    player.x + player.width > portal.x &&
+    player.y < portal.y + portal.height - 4 &&
+    player.y + player.height > portal.y + 2) {
     friction = 0.98;
-    if (bluePortal.x != -10 && bluePortal.dir === 'ceiling') {
-      player.x = bluePortal.x;
-      player.y = bluePortal.y + 4;
-      tempSpeed += Math.sqrt(Math.pow(player.velX, 2) + Math.pow(player.velY, 2));
-      player.velY = tempSpeed;
+    if (otherPortal.x != -10 && otherPortal.dir === 'ceiling') {
+      player.x = otherPortal.x;
+      player.y = otherPortal.y + 4;
       player.velX = 0;
     }
-    if (bluePortal.x != -10 && bluePortal.dir === 'left') {
-      canMove = false;
-      moveTimeout();
-      player.x = bluePortal.x - 36;
-      player.y = bluePortal.y + 4;
+    if (otherPortal.x != -10 && otherPortal.dir === 'left') {
+      player.x = otherPortal.x - 36;
+      player.y = otherPortal.y + 4;
       tempSpeed += Math.sqrt(Math.pow(player.velX, 2) + Math.pow(player.velY, 2));
       player.velX = -tempSpeed;
       player.velY = 0;
     }
-    if (bluePortal.x != -10 && bluePortal.dir === 'right') {
-      player.x = bluePortal.x + 12;
-      player.y = bluePortal.y + 4;
+    if (otherPortal.x != -10 && otherPortal.dir === 'right') {
+      canMove = false;
+      moveTimeout();
+      player.x = otherPortal.x + 10;
+      player.y = otherPortal.y + 4;
       tempSpeed += Math.sqrt(Math.pow(player.velX, 2) + Math.pow(player.velY, 2));
       player.velX = tempSpeed;
       player.velY = 0;
     }
-    if (bluePortal.x != -10 && bluePortal.dir === 'floor') {
-      player.x = bluePortal.x;
-      player.y = bluePortal.y - 32;
+    if (otherPortal.x != -10 && otherPortal.dir === 'floor') {
+      player.x = otherPortal.x;
+      player.y = otherPortal.y - 32;
       tempSpeed += Math.sqrt(Math.pow(player.velX, 2) + Math.pow(player.velY, 2));
       player.velY = -tempSpeed;
       player.velX = 0;
     }
   }
-
-  //right
-
-  if (bluePortal.dir === 'right' &&
-    player.x < bluePortal.x + bluePortal.width - 2 &&
-    player.x + player.width > bluePortal.x &&
-    player.y < bluePortal.y + bluePortal.height - 4 &&
-    player.y + player.height > bluePortal.y + 2) {
-    friction = 0.98;
-    if (orangePortal.x != -10 && orangePortal.dir === 'ceiling') {
-      player.x = orangePortal.x;
-      player.y = orangePortal.y + 4;
-      player.velX = 0;
-    }
-    if (orangePortal.x != -10 && orangePortal.dir === 'left') {
-      player.x = orangePortal.x - 36;
-      player.y = orangePortal.y + 4;
-      tempSpeed += Math.sqrt(Math.pow(player.velX, 2) + Math.pow(player.velY, 2));
-      player.velX = -tempSpeed;
-      player.velY = 0;
-    }
-    if (orangePortal.x != -10 && orangePortal.dir === 'right') {
-      canMove = false;
-      moveTimeout();
-      player.x = orangePortal.x + 10;
-      player.y = orangePortal.y + 4;
-      tempSpeed += Math.sqrt(Math.pow(player.velX, 2) + Math.pow(player.velY, 2));
-      player.velX = tempSpeed;
-      player.velY = 0;
-    }
-    if (orangePortal.x != -10 && orangePortal.dir === 'floor') {
-      player.x = orangePortal.x;
-      player.y = orangePortal.y - 32;
-      tempSpeed += Math.sqrt(Math.pow(player.velX, 2) + Math.pow(player.velY, 2));
-      player.velY = -tempSpeed;
-      player.velX = 0;
-    }
-  }
-
-  if (orangePortal.dir === 'right' &&
-    player.x < orangePortal.x + orangePortal.width &&
-    player.x + player.width - 2 > orangePortal.x &&
-    player.y < orangePortal.y + orangePortal.height - 4 &&
-    player.y + player.height > orangePortal.y + 2) {
-    friction = 0.98;
-    if (bluePortal.x != -10 && bluePortal.dir === 'ceiling') {
-      player.x = bluePortal.x;
-      player.y = bluePortal.y + 4;
-      player.velX = 0;
-    }
-    if (bluePortal.x != -10 && bluePortal.dir === 'left') {
-      player.x = bluePortal.x - 36;
-      player.y = bluePortal.y + 4;
-      tempSpeed += Math.sqrt(Math.pow(player.velX, 2) + Math.pow(player.velY, 2));
-      player.velX = -tempSpeed;
-      player.velY = 0;
-    }
-    if (bluePortal.x != -10 && bluePortal.dir === 'right') {
-      canMove = false;
-      moveTimeout();
-      player.x = bluePortal.x + 10;
-      player.y = bluePortal.y + 4;
-      tempSpeed += Math.sqrt(Math.pow(player.velX, 2) + Math.pow(player.velY, 2));
-      player.velX = tempSpeed;
-      player.velY = 0;
-    }
-    if (bluePortal.x != -10 && bluePortal.dir === 'floor') {
-      player.x = bluePortal.x;
-      player.y = bluePortal.y - 32;
-      tempSpeed += Math.sqrt(Math.pow(player.velX, 2) + Math.pow(player.velY, 2));
-      player.velY = -tempSpeed;
-      player.velX = 0;
-    }
-  }
-
-  if (player.velY > 40) {
-    player.velY = 40;
-  }
-
-  ctx.drawImage(player.currentChell, (player.FrameI * 32), 0, 32, 32, player.x, player.y, 32, 32);
-  ctx.clearRect(bluePortal.x, bluePortal.y, bluePortal.width, bluePortal.height);
-  ctx.drawImage(bluePortal.image, (bluePortal.FrameI * bluePortal.width), 0, bluePortal.width, bluePortal.height, bluePortal.x, bluePortal.y, bluePortal.width, bluePortal.height);
-  ctx.clearRect(orangePortal.x, orangePortal.y, orangePortal.width, orangePortal.height);
-  ctx.drawImage(orangePortal.image, (orangePortal.FrameI * orangePortal.width), 0, orangePortal.width, orangePortal.height, orangePortal.x, orangePortal.y, orangePortal.width, orangePortal.height);
-
-  if (player.x < endDoor.x + endDoor.width &&
-    player.x + player.width > endDoor.x &&
-    player.y < endDoor.y + endDoor.height &&
-    player.y + player.height > endDoor.y){
-    player.x = startDoor.x;
-    player.y = startDoor.y;
-    bluePortal.x = -10;
-    bluePortal.y = -10;
-    orangePortal.x = -10;
-    orangePortal.y = -10;
-    if (currentLvl == lvl4) {
-      currentLvl = lvl5;
-    }
-    if (currentLvl == lvl3) {
-      currentLvl = lvl4;
-    }
-    if (currentLvl == lvl2) {
-      currentLvl = lvl3;
-    }
-    if (currentLvl == lvl1) {
-      currentLvl = lvl2;
-    }
-  }
-
-  requestAnimationFrame(update);
-}
-
-function coordinateToGridPos(x, y) {
-  return [Math.floor(y / 32), Math.floor(x / 32)];
-}
-
-function isGridLocFull(arr) {
-  return currentLvl[arr[0]][arr[1]] !== 0;
-}
-
-function isGridLocFullNotGlass(arr) {
-  return currentLvl[arr[0]][arr[1]] !== 0 && currentLvl[arr[0]][arr[1]] !== 3;
-}
-
-function getGridItem(arr) {
-  return currentLvl[arr[0]][arr[1]];
 }
 
 function moveTimeout() {
