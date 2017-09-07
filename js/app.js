@@ -4,7 +4,7 @@ canvas.width = 960;
 canvas.height = 640;
 
 let player = getPlayer();
-let bluePortal  = getBluePortal();
+let bluePortal = getBluePortal();
 let orangePortal = getOrangePortal();
 let startDoor = getStartDoor();
 let endDoor = getEndDoor();
@@ -29,129 +29,133 @@ let height = window.innerHeight;
 
 //game loop
 function update() {
-
-  for (let x = 0; x < 30; x++) {
-    for (let y = 0; y < 20; y++) {
-      let pos = levels[curLvl][y][x];
-      //clear empty space
-      if (pos === 0) {
-        ctx.clearRect(x * 32, y * 32, 32, 32);
-      }
-      //non-portalable squares
-      if (pos === 1) {
-        drawBorderedCube(x, y, "black", "gray", 1);
-      }
-      //portalable squares
-      if (pos === 2) {
-        drawBorderedCube(x, y, "darkgray", "white", 1);
-      }
-      //glass squares
-      if (pos === 3) {
-        drawBorderedCube(x, y, "darkgray", "white", 0.2);
-      }
-    }
-  }
-
-  player.jumping = true;
-  if (player.notInEdgeWalls()) {
-    player.collideWith(['bottom', 'top']);
-  }
-  player.collideWith(['left', 'right']);
-
-  if (keys[87] || keys[32]) {
-    // up arrow or space
-    if (!player.jumping) {
-      player.jumping = true;
-      player.velY = -player.speed * 2;
-    }
-  }
-  if (keys[68] && canMove) {
-    // right arrow
-    if (player.velX < player.speed) {
-      player.velX++;
-    }
-  }
-  if (keys[65] && canMove) {
-    // left arrow
-    if (player.velX > -player.speed) {
-      player.velX--;
-    }
-  }
-
-  //physics movement
-  player.velX *= friction;
-  player.velY += gravity;
-  player.x += player.velX;
-  player.y += player.velY;
-
-  //sprite animation
-  player.setSpriteDirection();
-  animateSprite(player);
-  animateSprite(bluePortal);
-  animateSprite(orangePortal);
-
-  //draw gates
-  ctx.drawImage(portal_door_start, startDoor.x, startDoor.y);
-  ctx.drawImage(portal_door_end, endDoor.x, endDoor.y);
-
-  finalPos = portalAim();
-
-  if (blueShoot) {
-    blueShoot = false;
-    firePortal(bluePortal, orangePortal, 'blue')
-  }
-  if (orangeShoot) {
-    orangeShoot = false;
-    firePortal(orangePortal, bluePortal, 'orange')
-  }
-
-                    //(portal in  ,  portal out)
-  floorPortalCollision(bluePortal, orangePortal);
-  floorPortalCollision(orangePortal, bluePortal);
-
-  ceilingPortalCollision(bluePortal, orangePortal);
-  ceilingPortalCollision(orangePortal, bluePortal);
-
-  leftPortalCollision(bluePortal, orangePortal);
-  leftPortalCollision(orangePortal, bluePortal);
-
-  rightPortalCollision(bluePortal, orangePortal);
-  rightPortalCollision(orangePortal, bluePortal);
-
-  if (player.velY > 27) {
-    player.velY = 27;
-  }
-  console.log(Math.trunc(player.velY));
-  ctx.drawImage(player.currentChell, (player.FrameI * 32), 0, 32, 32, player.x, player.y, 32, 32);
-  ctx.clearRect(bluePortal.x, bluePortal.y, bluePortal.width, bluePortal.height);
-  ctx.drawImage(bluePortal.image, (bluePortal.FrameI * bluePortal.width), 0, bluePortal.width, bluePortal.height, bluePortal.x, bluePortal.y, bluePortal.width, bluePortal.height);
-  ctx.clearRect(orangePortal.x, orangePortal.y, orangePortal.width, orangePortal.height);
-  ctx.drawImage(orangePortal.image, (orangePortal.FrameI * orangePortal.width), 0, orangePortal.width, orangePortal.height, orangePortal.x, orangePortal.y, orangePortal.width, orangePortal.height);
-
-  if (player.x < endDoor.x + endDoor.width &&
-    player.x + player.width > endDoor.x &&
-    player.y < endDoor.y + endDoor.height &&
-    player.y + player.height > endDoor.y) {
-    player.x = startDoor.x;
-    player.y = startDoor.y;
-    bluePortal.x = -10;
-    bluePortal.y = -10;
-    orangePortal.x = -10;
-    orangePortal.y = -10;
-    if (curLvl == 3) {
-      curLvl = 4;
-    }
-    if (curLvl == 2) {
-      curLvl = 3;
-    }
-    if (curLvl == 1) {
-      curLvl = 2;
-    }
-    if (curLvl == 0) {
+  if (curLvl === 0) {
+    ctx.drawImage(title, 0, 0);
+    if (keys[13]) {
       curLvl = 1;
     }
-  }
+  } else {
+    for (let x = 0; x < 30; x++) {
+      for (let y = 0; y < 20; y++) {
+        let pos = levels[curLvl][y][x];
+        //clear empty space
+        if (pos === 0) {
+          ctx.clearRect(x * 32, y * 32, 32, 32);
+        }
+        //non-portalable squares
+        if (pos === 1) {
+          drawBorderedCube(x, y, "black", "gray", 1);
+        }
+        //portalable squares
+        if (pos === 2) {
+          drawBorderedCube(x, y, "darkgray", "white", 1);
+        }
+        //glass squares
+        if (pos === 3) {
+          drawBorderedCube(x, y, "darkgray", "white", 0.2);
+        }
+      }
+    }
 
+    player.jumping = true;
+    if (player.notInEdgeWalls()) {
+      player.collideWith(['bottom', 'top']);
+    }
+    player.collideWith(['left', 'right']);
+
+    if (keys[87] || keys[32]) {
+      // up arrow or space
+      if (!player.jumping) {
+        player.jumping = true;
+        player.velY = -player.speed * 2;
+      }
+    }
+    if (keys[68] && canMove) {
+      // right arrow
+      if (player.velX < player.speed) {
+        player.velX++;
+      }
+    }
+    if (keys[65] && canMove) {
+      // left arrow
+      if (player.velX > -player.speed) {
+        player.velX--;
+      }
+    }
+
+    //physics movement
+    player.velX *= friction;
+    player.velY += gravity;
+    player.x += player.velX;
+    player.y += player.velY;
+
+    //sprite animation
+    player.setSpriteDirection();
+    animateSprite(player);
+    animateSprite(bluePortal);
+    animateSprite(orangePortal);
+
+    //draw gates
+    ctx.drawImage(portal_door_start, startDoor.x, startDoor.y);
+    ctx.drawImage(portal_door_end, endDoor.x, endDoor.y);
+
+    finalPos = portalAim();
+
+    if (blueShoot) {
+      blueShoot = false;
+      firePortal(bluePortal, orangePortal, 'blue')
+    }
+    if (orangeShoot) {
+      orangeShoot = false;
+      firePortal(orangePortal, bluePortal, 'orange')
+    }
+
+    //(portal in  ,  portal out)
+    floorPortalCollision(bluePortal, orangePortal);
+    floorPortalCollision(orangePortal, bluePortal);
+
+    ceilingPortalCollision(bluePortal, orangePortal);
+    ceilingPortalCollision(orangePortal, bluePortal);
+
+    leftPortalCollision(bluePortal, orangePortal);
+    leftPortalCollision(orangePortal, bluePortal);
+
+    rightPortalCollision(bluePortal, orangePortal);
+    rightPortalCollision(orangePortal, bluePortal);
+
+    if (player.velY > 27) {
+      player.velY = 27;
+    }
+    ctx.drawImage(player.currentChell, (player.FrameI * 32), 0, 32, 32, player.x, player.y, 32, 32);
+    ctx.clearRect(bluePortal.x, bluePortal.y, bluePortal.width, bluePortal.height);
+    ctx.drawImage(bluePortal.image, (bluePortal.FrameI * bluePortal.width), 0, bluePortal.width, bluePortal.height, bluePortal.x, bluePortal.y, bluePortal.width, bluePortal.height);
+    ctx.clearRect(orangePortal.x, orangePortal.y, orangePortal.width, orangePortal.height);
+    ctx.drawImage(orangePortal.image, (orangePortal.FrameI * orangePortal.width), 0, orangePortal.width, orangePortal.height, orangePortal.x, orangePortal.y, orangePortal.width, orangePortal.height);
+
+    if (player.x < endDoor.x + endDoor.width &&
+      player.x + player.width > endDoor.x &&
+      player.y < endDoor.y + endDoor.height &&
+      player.y + player.height > endDoor.y) {
+      player.x = startDoor.x;
+      player.y = startDoor.y;
+      bluePortal.x = -10;
+      bluePortal.y = -10;
+      orangePortal.x = -10;
+      orangePortal.y = -10;
+      if (curLvl == 3) {
+        curLvl = 4;
+      }
+      if (curLvl == 2) {
+        curLvl = 3;
+      }
+      if (curLvl == 1) {
+        curLvl = 2;
+      }
+      if (curLvl == 0) {
+        curLvl = 1;
+      }
+    }
+  }
   requestAnimationFrame(update);
 }
 
@@ -252,7 +256,7 @@ function firePortal(portal, otherPortal, color) {
   }
 }
 
-function floorPortalCollision(portal, otherPortal){
+function floorPortalCollision(portal, otherPortal) {
   if (portal.dir === 'floor' &&
     player.x < portal.x + portal.width - 8 &&
     player.x + player.width > portal.x + 8 &&
@@ -265,6 +269,8 @@ function floorPortalCollision(portal, otherPortal){
       player.velX = 0;
     }
     if (otherPortal.x != -10 && otherPortal.dir === 'left') {
+      canMove = false;
+      moveTimeout();
       player.x = otherPortal.x - 36;
       player.y = otherPortal.y + 4;
       tempSpeed += Math.sqrt(Math.pow(player.velX, 2) + Math.pow(player.velY, 2));
@@ -272,6 +278,8 @@ function floorPortalCollision(portal, otherPortal){
       player.velY = 0;
     }
     if (otherPortal.x != -10 && otherPortal.dir === 'right') {
+      canMove = false;
+      moveTimeout();
       player.x = otherPortal.x + 12;
       player.y = otherPortal.y + 4;
       tempSpeed += Math.sqrt(Math.pow(player.velX, 2) + Math.pow(player.velY, 2));
@@ -287,7 +295,7 @@ function floorPortalCollision(portal, otherPortal){
   }
 }
 
-function ceilingPortalCollision(portal, otherPortal){
+function ceilingPortalCollision(portal, otherPortal) {
   if (portal.dir === 'ceiling' &&
     player.x < portal.x + portal.width - 8 &&
     player.x + player.width > portal.x + 8 &&
@@ -323,7 +331,7 @@ function ceilingPortalCollision(portal, otherPortal){
   }
 }
 
-function leftPortalCollision(portal, otherPortal){
+function leftPortalCollision(portal, otherPortal) {
   if (portal.dir === 'left' &&
     player.x < portal.x + portal.width &&
     player.x + player.width - 2 > portal.x &&
@@ -362,7 +370,7 @@ function leftPortalCollision(portal, otherPortal){
   }
 }
 
-function rightPortalCollision(portal, otherPortal){
+function rightPortalCollision(portal, otherPortal) {
   if (portal.dir === 'right' &&
     player.x < portal.x + portal.width - 2 &&
     player.x + player.width > portal.x &&
