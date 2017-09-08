@@ -22,10 +22,14 @@ let gravity = 0.24;
 let mouseX = 0;
 let mouseY = 0;
 let levels = getLevels();
-let curLvl = 4;
+let curLvl = 0;
 let width = window.innerWidth;
 let height = window.innerHeight;
-
+let time;
+let done = false
+let portalCount = 0;
+let finalTime;
+let minutes = 0;
 
 //game loop
 function update() {
@@ -33,8 +37,31 @@ function update() {
     ctx.drawImage(title, 0, 0);
     if (keys[13]) {
       curLvl = 1;
+      time = new Date();
     }
-  } else {
+  }
+  else if (curLvl === levels.length){
+    if(!done){
+      done = true;
+      console.log("test");
+      finalTime = (new Date() - time)/1000;
+      while(finalTime > 60){
+        finalTime -= 60;
+        minutes += 1;
+      }
+    }
+    ctx.drawImage(finish, 0, 0);
+    ctx.font = "30px Arial";
+    ctx.fillStyle = "#545454";
+    ctx.fillText(minutes + ':' + Math.round(finalTime * 100) / 100,490,390);
+    ctx.fillText(portalCount,490,456);
+    console.log(finalTime);
+    if (keys[13]) {
+      location.reload();
+    }
+  }
+  else {
+    console.log(portalCount, (new Date() - time)/1000);
     for (let x = 0; x < 30; x++) {
       for (let y = 0; y < 20; y++) {
         let pos = levels[curLvl][y][x];
@@ -142,18 +169,7 @@ function update() {
       bluePortal.y = -10;
       orangePortal.x = -10;
       orangePortal.y = -10;
-      if (curLvl == 3) {
-        curLvl = 4;
-      }
-      if (curLvl == 2) {
-        curLvl = 3;
-      }
-      if (curLvl == 1) {
-        curLvl = 2;
-      }
-      if (curLvl == 0) {
-        curLvl = 1;
-      }
+      curLvl++;
     }
   }
   requestAnimationFrame(update);
@@ -213,6 +229,7 @@ function portalAim() {
 
 function firePortal(portal, otherPortal, color) {
   if (getGridItem(coordinateToGridPos(finalPos[0], finalPos[1])) === 2) {
+    portalCount ++;
     //left portal
     if (!isGridLocFull(coordinateToGridPos(finalPos[0] - 1, finalPos[1]))) {
       portal.dir = "left";

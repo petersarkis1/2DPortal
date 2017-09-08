@@ -24,6 +24,8 @@ let portal_door_end = new Image(64, 64);
 portal_door_end.src = 'portalDoorEnd.png';
 let title = new Image(960, 640);
 title.src = 'title.png';
+let finish = new Image(960, 640);
+finish.src = 'finish.png';
 
 function getBluePortal() {
   return {
