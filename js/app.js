@@ -30,6 +30,7 @@ let done = false
 let portalCount = 0;
 let finalTime;
 let minutes = 0;
+let time0 = "";
 
 //game loop
 function update() {
@@ -39,29 +40,27 @@ function update() {
       curLvl = 1;
       time = new Date();
     }
-  }
-  else if (curLvl === levels.length){
-    if(!done){
+  } else if (curLvl === levels.length) {
+    if (!done) {
       done = true;
-      console.log("test");
-      finalTime = (new Date() - time)/1000;
-      while(finalTime > 60){
+      finalTime = (new Date() - time) / 1000;
+      while (finalTime > 60) {
         finalTime -= 60;
         minutes += 1;
+      }
+      if (finalTime < 10) {
+        time0 = '0';
       }
     }
     ctx.drawImage(finish, 0, 0);
     ctx.font = "30px Arial";
     ctx.fillStyle = "#545454";
-    ctx.fillText(minutes + ':' + Math.round(finalTime * 100) / 100,490,390);
-    ctx.fillText(portalCount,490,456);
-    console.log(finalTime);
+    ctx.fillText(minutes + ':' + time0 + Math.round(finalTime * 100) / 100, 490, 390);
+    ctx.fillText(portalCount, 490, 456);
     if (keys[13]) {
       location.reload();
     }
-  }
-  else {
-    console.log(portalCount, (new Date() - time)/1000);
+  } else {
     for (let x = 0; x < 30; x++) {
       for (let y = 0; y < 20; y++) {
         let pos = levels[curLvl][y][x];
@@ -122,10 +121,17 @@ function update() {
     animateSprite(bluePortal);
     animateSprite(orangePortal);
 
-    //draw gates
+    //draw gates and sign
     ctx.drawImage(portal_door_start, startDoor.x, startDoor.y);
     ctx.drawImage(portal_door_end, endDoor.x, endDoor.y);
-
+    ctx.drawImage(level_sign, startDoor.x + 64, startDoor.y);
+    ctx.font = "30px Arial";
+    ctx.fillStyle = "black";
+    if (curLvl < 10) {
+      ctx.fillText('0' + curLvl, startDoor.x + 82, startDoor.y + 32);
+    } else {
+      ctx.fillText(curLvl, startDoor.x + 82, startDoor.y + 32);
+    }
     finalPos = portalAim();
 
     if (blueShoot) {
@@ -229,7 +235,7 @@ function portalAim() {
 
 function firePortal(portal, otherPortal, color) {
   if (getGridItem(coordinateToGridPos(finalPos[0], finalPos[1])) === 2) {
-    portalCount ++;
+    portalCount++;
     //left portal
     if (!isGridLocFull(coordinateToGridPos(finalPos[0] - 1, finalPos[1]))) {
       portal.dir = "left";
@@ -441,19 +447,21 @@ window.addEventListener('contextmenu', function(el) {
   return false;
 }, false);
 window.addEventListener("mousedown", function(el) {
-  if (el.button === 0 && blueCanShoot) {
-    blueShoot = true;
-    blueCanShoot = false;
-    setTimeout(function() {
-      blueCanShoot = true;
-    }, 200);
-  }
-  if (el.button === 2 && orangeCanShoot) {
-    orangeShoot = true;
-    orangeCanShoot = false;
-    setTimeout(function() {
-      orangeCanShoot = true;
-    }, 200);
+  if (curLvl !== 0) {
+    if (el.button === 0 && blueCanShoot) {
+      blueShoot = true;
+      blueCanShoot = false;
+      setTimeout(function() {
+        blueCanShoot = true;
+      }, 200);
+    }
+    if (el.button === 2 && orangeCanShoot) {
+      orangeShoot = true;
+      orangeCanShoot = false;
+      setTimeout(function() {
+        orangeCanShoot = true;
+      }, 200);
+    }
   }
 });
 
