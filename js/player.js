@@ -45,7 +45,7 @@ function getPlayer() {
     FrameI: 0,
     frameSpeed: 10,
     frameCount: 0,
-    notInEdgeWalls: function() {
+    notInWalls: function() {
       return (coordinateToGridPos(this.x + 32, this.y + 32)[1] !== levels[curLvl][0].length - 1 &&
         coordinateToGridPos(this.x, this.y + 32)[1] !== 0)
     },

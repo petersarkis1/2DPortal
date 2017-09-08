@@ -1,4 +1,5 @@
 let canvas = document.getElementById("canvas");
+let sound = document.getElementById("sound");
 ctx = canvas.getContext("2d");
 canvas.width = 960;
 canvas.height = 640;
@@ -84,7 +85,7 @@ function update() {
     }
 
     player.jumping = true;
-    if (player.notInEdgeWalls()) {
+    if (player.notInWalls()) {
       player.collideWith(['bottom', 'top']);
     }
     player.collideWith(['left', 'right']);
@@ -447,8 +448,9 @@ window.addEventListener('contextmenu', function(el) {
   return false;
 }, false);
 window.addEventListener("mousedown", function(el) {
-  if (curLvl !== 0) {
+  if (curLvl !== 0 && curLvl !== levels.length) {
     if (el.button === 0 && blueCanShoot) {
+      sound.play();
       blueShoot = true;
       blueCanShoot = false;
       setTimeout(function() {
@@ -456,6 +458,7 @@ window.addEventListener("mousedown", function(el) {
       }, 200);
     }
     if (el.button === 2 && orangeCanShoot) {
+      sound.play();
       orangeShoot = true;
       orangeCanShoot = false;
       setTimeout(function() {
